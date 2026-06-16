@@ -1,0 +1,105 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$AWxYxB6fQGX01LGX1Gu34g$RAXc9XaeAPFEnBIQ+OGRYRVMUUmnckL9wZHXdUTKYWw=",
+    "last_login": "2026-06-16T02:51:15.209Z",
+    "is_superuser": false,
+    "username": "Алексей",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-06-16T02:51:15.046Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$AWxYxB6fQGX01LGX1Gu34g$RAXc9XaeAPFEnBIQ+OGRYRVMUUmnckL9wZHXdUTKYWw=",
+    "last_login": "2026-06-16T07:49:45.483Z",
+    "is_superuser": true,
+    "username": "teterev",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-06-16T07:49:11.873Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "diary.trip",
+  "pk": 2,
+  "fields": {
+    "author": [
+      "Алексей"
+    ],
+    "title": "Абакан",
+    "description": "Преображенский парк",
+    "location_name": "Преображенский парк",
+    "latitude": "53.741823",
+    "longitude": "91.429553",
+    "cost": "0.00",
+    "rating_transport": 5,
+    "rating_safety": 5,
+    "rating_population": 4,
+    "rating_nature": 5,
+    "created_at": "2026-06-16T07:45:14.285Z"
+  }
+},
+{
+  "model": "diary.trip",
+  "pk": 6,
+  "fields": {
+    "author": [
+      "teterev"
+    ],
+    "title": "Тест",
+    "description": "Тест",
+    "location_name": "Тест",
+    "latitude": "53.702188",
+    "longitude": "91.516530",
+    "cost": "15000.00",
+    "rating_transport": 2,
+    "rating_safety": 3,
+    "rating_population": 2,
+    "rating_nature": 5,
+    "created_at": "2026-06-16T08:24:15.312Z"
+  }
+},
+{
+  "model": "diary.tripphoto",
+  "pk": 2,
+  "fields": {
+    "trip": 2,
+    "image": "trips/2026/06/Парк_SCygAXq.png",
+    "caption": ""
+  }
+},
+{
+  "model": "diary.tripphoto",
+  "pk": 3,
+  "fields": {
+    "trip": 6,
+    "image": "trips/2026/06/Парк_88DbB7O.png",
+    "caption": ""
+  }
+},
+{
+  "model": "diary.tripphoto",
+  "pk": 4,
+  "fields": {
+    "trip": 6,
+    "image": "trips/2026/06/Парк_mVzXLAS.png",
+    "caption": ""
+  }
+}
+]

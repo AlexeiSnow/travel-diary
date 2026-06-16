@@ -1,0 +1,63 @@
+{% extends 'diary/base.html' %}
+
+{% block title %}Все путешествия{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-map-fill me-2" style="color:var(--accent-orange)"></i>Все путешествия</h2>
+    {% if user.is_authenticated %}
+        <a href="{% url 'trip_create' %}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>Добавить путешествие</a>
+    {% endif %}
+</div>
+
+{% if trips %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for trip in trips %}
+        <div class="col">
+            <div class="card h-100 position-relative">
+                {% with trip.photos.first as photo %}
+                    {% if photo %}
+                        <img src="{{ photo.image.url }}" class="card-img-top" alt="{{ photo.caption }}">
+                    {% else %}
+                        <div class="card-img-top bg-secondary d-flex align-items-center
+                                    justify-content-center text-white">
+                            <i class="bi bi-image" style="font-size:3rem"></i>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ trip.title }}</h5>
+                    <p class="text-muted small mb-1">
+                        <i class="bi bi-geo-alt-fill me-1"></i>{{ trip.location_name }} &nbsp;·&nbsp;
+                        <i class="bi bi-person-fill me-1"></i>{{ trip.author.username }}
+                    </p>
+                    <p class="card-text">{{ trip.description|truncatechars:100 }}</p>
+                    {% if trip.cost %}
+                        <p class="small"><i class="bi bi-cash-coin me-1"></i>{{ trip.cost }} руб.</p>
+                    {% endif %}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge badge-rating rounded-pill">
+                            <i class="bi bi-star-fill me-1"></i>{{ trip.rating_avg }}
+                        </span>
+                        <a href="{% url 'trip_detail' trip.pk %}" class="btn btn-sm btn-outline-secondary stretched-link" style="backdrop-filter:none;-webkit-backdrop-filter:none;">
+                            Подробнее
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-muted small">
+                    {{ trip.created_at|date:"d.m.Y" }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5 text-white-50">
+        <i class="bi bi-globe-americas" style="font-size:4rem"></i>
+        <p class="mt-3">Пока нет ни одного путешествия. Будь первым!</p>
+        {% if user.is_authenticated %}
+            <a href="{% url 'trip_create' %}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>Добавить путешествие</a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}

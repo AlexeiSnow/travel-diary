@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-travel_diary}
+      POSTGRES_USER: ${POSTGRES_USER:-travel_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-travel_pass}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-travel_user} -d ${POSTGRES_DB:-travel_diary}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-django-insecure-change-me-in-prod}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-True}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-*}
+      POSTGRES_DB: ${POSTGRES_DB:-travel_diary}
+      POSTGRES_USER: ${POSTGRES_USER:-travel_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-travel_pass}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-admin}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL:-admin@example.com}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-admin12345}
+    ports:
+      - "8000:8000"
+    volumes:
+      - media_data:/app/media
+
+volumes:
+  postgres_data:
+  media_data:

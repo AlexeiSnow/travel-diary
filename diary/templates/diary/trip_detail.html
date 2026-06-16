@@ -1,0 +1,149 @@
+{% extends 'diary/base.html' %}
+
+{% block title %}{{ trip.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2>{{ trip.title }}</h2>
+                <p class="text-muted">
+                    <i class="bi bi-geo-alt-fill me-1"></i>{{ trip.location_name }} &nbsp;·&nbsp;
+                    <i class="bi bi-person-fill me-1"></i>{{ trip.author.username }} &nbsp;·&nbsp;
+                    <i class="bi bi-calendar3 me-1"></i>{{ trip.created_at|date:"d.m.Y" }}
+                </p>
+                {% if trip.cost %}
+                    <p><i class="bi bi-cash-coin me-1"></i><strong>Стоимость:</strong> {{ trip.cost }} руб.</p>
+                {% endif %}
+                <hr>
+                <p>{{ trip.description }}</p>
+            </div>
+        </div>
+
+        <!-- Фотографии -->
+        {% if trip.photos.all %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5><i class="bi bi-camera-fill me-2"></i>Фотографии</h5>
+                <div class="row g-2">
+                    {% for photo in trip.photos.all %}
+                    <div class="col-6 col-md-4">
+                        <img src="{{ photo.image.url }}" class="img-fluid rounded"
+                             alt="{{ photo.caption }}" style="height:150px; object-fit:cover; width:100%">
+                        {% if photo.caption %}
+                            <small class="text-muted">{{ photo.caption }}</small>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Карта -->
+        {% if trip.latitude and trip.longitude %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5><i class="bi bi-map-fill me-2"></i>На карте</h5>
+                <div class="map-container" id="map"></div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Оценки -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="mb-3"><i class="bi bi-star-fill me-2" style="color:var(--accent-orange)"></i>Оценки</h5>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Удобство передвижения</span><strong>{{ trip.rating_transport }}/5</strong>
+                    </div>
+                    <div class="progress" style="height:8px; border-radius:6px;">
+                        <div class="progress-bar" style="width: {% widthratio trip.rating_transport 5 100 %}%; background: linear-gradient(90deg, var(--accent-orange), var(--accent-coral));"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Безопасность</span><strong>{{ trip.rating_safety }}/5</strong>
+                    </div>
+                    <div class="progress" style="height:8px; border-radius:6px;">
+                        <div class="progress-bar" style="width: {% widthratio trip.rating_safety 5 100 %}%; background: linear-gradient(90deg, var(--accent-orange), var(--accent-coral));"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Населённость</span><strong>{{ trip.rating_population }}/5</strong>
+                    </div>
+                    <div class="progress" style="height:8px; border-radius:6px;">
+                        <div class="progress-bar" style="width: {% widthratio trip.rating_population 5 100 %}%; background: linear-gradient(90deg, var(--accent-orange), var(--accent-coral));"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Растительность</span><strong>{{ trip.rating_nature }}/5</strong>
+                    </div>
+                    <div class="progress" style="height:8px; border-radius:6px;">
+                        <div class="progress-bar" style="width: {% widthratio trip.rating_nature 5 100 %}%; background: linear-gradient(90deg, var(--accent-orange), var(--accent-coral));"></div>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="d-flex justify-content-between align-items-center">
+                    <strong>Средняя оценка</strong>
+                    <span class="badge badge-rating rounded-pill fs-6">
+                        <i class="bi bi-star-fill me-1"></i>{{ trip.rating_avg }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Координаты -->
+        {% if trip.latitude and trip.longitude %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5><i class="bi bi-pin-map-fill me-2"></i>Координаты</h5>
+                <p class="small mb-1">Широта: {{ trip.latitude }}</p>
+                <p class="small">Долгота: {{ trip.longitude }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Кнопки управления -->
+        {% if user == trip.author %}
+        <div class="card">
+            <div class="card-body d-grid gap-2">
+                <a href="{% url 'trip_edit' trip.pk %}" class="btn btn-outline-primary"><i class="bi bi-pencil-square me-1"></i>Редактировать</a>
+                <a href="{% url 'trip_delete' trip.pk %}" class="btn btn-outline-danger"><i class="bi bi-trash3 me-1"></i>Удалить</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% load l10n %}
+{% if trip.latitude and trip.longitude %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    const map = L.map('map').setView([{{ trip.latitude|unlocalize }}, {{ trip.longitude|unlocalize }}], 13);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '© OpenStreetMap contributors © CARTO',
+        subdomains: 'abcd',
+        maxZoom: 19
+    }).addTo(map);
+    L.marker([{{ trip.latitude|unlocalize }}, {{ trip.longitude|unlocalize }}])
+        .addTo(map)
+        .bindPopup('{{ trip.location_name }}')
+        .openPopup();
+</script>
+{% endif %}
+{% endblock %}

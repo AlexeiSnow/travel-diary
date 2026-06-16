@@ -1,0 +1,41 @@
+{% extends 'diary/base.html' %}
+{% block title %}Мои путешествия{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-suitcase2-fill me-2" style="color:var(--accent-orange)"></i>Мои путешествия</h2>
+{% if trips %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for trip in trips %}
+        <div class="col">
+            <div class="card h-100">
+                {% with trip.photos.first as photo %}
+                    {% if photo %}
+                        <img src="{{ photo.image.url }}" class="card-img-top" alt="">
+                    {% else %}
+                        <div class="card-img-top bg-secondary d-flex align-items-center
+                                    justify-content-center text-white">
+                            <i class="bi bi-image" style="font-size:3rem"></i>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="card-body">
+                    <h5>{{ trip.title }}</h5>
+                    <p class="text-muted small"><i class="bi bi-geo-alt-fill me-1"></i>{{ trip.location_name }}</p>
+                    <p>{{ trip.description|truncatechars:80 }}</p>
+                </div>
+                <div class="card-footer d-flex gap-2">
+                    <a href="{% url 'trip_detail' trip.pk %}" class="btn btn-sm btn-outline-secondary">Открыть</a>
+                    <a href="{% url 'trip_edit' trip.pk %}" class="btn btn-sm btn-outline-primary">Изменить</a>
+                    <a href="{% url 'trip_delete' trip.pk %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5 text-white-50">
+        <i class="bi bi-suitcase2" style="font-size:4rem"></i>
+        <p class="mt-3">У вас пока нет записей.</p>
+        <a href="{% url 'trip_create' %}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>Добавить первое путешествие</a>
+    </div>
+{% endif %}
+{% endblock %}
