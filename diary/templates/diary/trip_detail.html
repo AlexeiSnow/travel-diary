@@ -21,7 +21,6 @@
             </div>
         </div>
 
-        <!-- Фотографии -->
         {% if trip.photos.all %}
         <div class="card mb-4">
             <div class="card-body">
@@ -41,7 +40,6 @@
         </div>
         {% endif %}
 
-        <!-- Карта -->
         {% if trip.latitude and trip.longitude %}
         <div class="card mb-4">
             <div class="card-body">
@@ -53,7 +51,6 @@
     </div>
 
     <div class="col-lg-4">
-        <!-- Оценки -->
         <div class="card mb-4">
             <div class="card-body">
                 <h5 class="mb-3"><i class="bi bi-star-fill me-2" style="color:var(--accent-orange)"></i>Оценки</h5>
@@ -104,7 +101,6 @@
             </div>
         </div>
 
-        <!-- Координаты -->
         {% if trip.latitude and trip.longitude %}
         <div class="card mb-4">
             <div class="card-body">
@@ -115,7 +111,6 @@
         </div>
         {% endif %}
 
-        <!-- Кнопки управления -->
         {% if user == trip.author %}
         <div class="card">
             <div class="card-body d-grid gap-2">

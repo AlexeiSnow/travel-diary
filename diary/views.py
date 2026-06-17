@@ -8,12 +8,11 @@ from .forms import RegisterForm, TripForm, TripPhotoForm
 
 
 def register(request):
-    """Регистрация нового пользователя"""
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # сразу логиним после регистрации
+            login(request, user)
             messages.success(request, 'Аккаунт создан! Добро пожаловать.')
             return redirect('trip_list')
     else:
@@ -22,7 +21,6 @@ def register(request):
 
 
 def login_view(request):
-    """Вход в систему"""
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
@@ -39,28 +37,24 @@ def logout_view(request):
 
 
 def trip_list(request):
-    """Главная — все путешествия всех пользователей"""
     trips = Trip.objects.select_related('author').prefetch_related('photos')
     return render(request, 'diary/trip_list.html', {'trips': trips})
 
 
 def trip_detail(request, pk):
-    """Детальная страница одного путешествия"""
     trip = get_object_or_404(Trip, pk=pk)
     return render(request, 'diary/trip_detail.html', {'trip': trip})
 
 
 @login_required
 def trip_create(request):
-    """Создание новой записи о путешествии"""
     if request.method == 'POST':
         form = TripForm(request.POST)
         photo_form = TripPhotoForm(request.POST, request.FILES)
         if form.is_valid():
-            trip = form.save(commit=False)  # не сохраняем сразу
-            trip.author = request.user      # проставляем автора
+            trip = form.save(commit=False)
+            trip.author = request.user
             trip.save()
-            # Сохраняем фото если оно было загружено
             if photo_form.is_valid() and photo_form.cleaned_data.get('image'):
                 photo = photo_form.save(commit=False)
                 photo.trip = trip
@@ -79,7 +73,6 @@ def trip_create(request):
 
 @login_required
 def trip_edit(request, pk):
-    """Редактирование существующей записи"""
     trip = get_object_or_404(Trip, pk=pk, author=request.user)
     if request.method == 'POST':
         form = TripForm(request.POST, instance=trip)
@@ -105,7 +98,6 @@ def trip_edit(request, pk):
 
 @login_required
 def trip_delete(request, pk):
-    """Удаление записи"""
     trip = get_object_or_404(Trip, pk=pk, author=request.user)
     if request.method == 'POST':
         trip.delete()
@@ -116,6 +108,5 @@ def trip_delete(request, pk):
 
 @login_required
 def my_trips(request):
-    """Личные путешествия текущего пользователя"""
     trips = Trip.objects.filter(author=request.user).prefetch_related('photos')
     return render(request, 'diary/my_trips.html', {'trips': trips})

@@ -5,7 +5,6 @@ from .models import Trip, TripPhoto
 
 
 class RegisterForm(UserCreationForm):
-    """Форма регистрации — расширяем стандартную, добавляем email"""
     email = forms.EmailField(required=True, label='Email')
 
     class Meta:
@@ -19,8 +18,6 @@ class RegisterForm(UserCreationForm):
 
 
 class TripForm(forms.ModelForm):
-    """Форма создания/редактирования путешествия"""
-
     RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
 
     rating_transport = forms.ChoiceField(
@@ -70,8 +67,6 @@ class TripForm(forms.ModelForm):
 
 
 class TripPhotoForm(forms.ModelForm):
-    """Форма загрузки фото"""
-
     class Meta:
         model = TripPhoto
         fields = ['image', 'caption']
